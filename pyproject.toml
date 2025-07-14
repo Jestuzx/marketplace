@@ -1,0 +1,27 @@
+[project]
+name = "marketplace"
+version = "0.1.0"
+description = ""
+authors = [
+    {name = "Your Name",email = "you@example.com"}
+]
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "django (>=5.2.4,<6.0.0)",
+    "django-filter (>=25.1,<26.0)",
+    "django-htmx (>=1.23.2,<2.0.0)",
+    "django-render-block (>=0.11,<0.12)",
+    "pillow (>=11.3.0,<12.0.0)"
+]
+
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.group.dev.dependencies]
+black = "^25.1.0"
+flake8 = "^7.3.0"
+isort = "^6.0.1"
+
