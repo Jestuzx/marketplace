@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Marketplace{% endblock %}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://unpkg.com/htmx.org@1.9.3"></script>
+
+</head>
+<body>
+
+<header>
+    <nav>
+        <a href="/">Home</a> |
+        <a href="{% url 'products:product_list' %}">Catalog</a> |
+        <a href="{% url 'orders:create_order' %}">Cart</a> |
+
+        {% if user.is_authenticated %}
+            {% if user.user_type == 'seller' %}
+                <a href="{% url 'products:product_add' %}">Add Product</a> |
+                <a href="{% url 'products:category_add' %}">Add Category</a> |
+            {% endif %}
+
+            <a href="{% url 'profile' %}">Profile</a> |
+
+            <span>Welcome, {{ user.username }}!</span>
+
+            <form method="post" action="{% url 'logout' %}" style="display:inline; margin-left: 10px;">
+                {% csrf_token %}
+                <button type="submit" style="background:none; border:none; padding:0; cursor:pointer; color:#00f; text-decoration:underline;">
+                    Logout
+                </button>
+            </form>
+        {% else %}
+            <a href="{% url 'login' %}">Login</a> |
+            <a href="{% url 'register' %}">Register</a>
+        {% endif %}
+
+        <span id="cart-count" style="margin-left: 15px;">
+            {% include 'orders/partials/cart_count.html' %}
+        </span>
+    </nav>
+</header>
+
+
+<main>
+    {% block content %}
+    {% endblock %}
+</main>
+
+<footer>
+    <hr>
+    <p>&copy; {{ year|default:2025 }} Marketplace</p>
+</footer>
+
+</body>
+</html>

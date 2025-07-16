@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% load cart_tags %}
+
+{% block content %}
+<h2>Your Cart</h2>
+
+<div id="cart-table">
+    {% include 'orders/partials/cart_table.html' %}
+</div>
+
+<a href="{% url 'orders:create_order' %}">Proceed to Checkout</a>
+{% endblock %}

@@ -39,6 +39,8 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "users",
     "products",
+    "orders",
+    
 ]
 
 AUTH_USER_MODEL = 'users.CustomUser'
@@ -115,6 +117,9 @@ TIME_ZONE = "UTC"
 USE_I18N = True
 
 USE_TZ = True
+
+LOGIN_URL = 'login'
+LOGIN_REDIRECT_URL = '/users/profile/'
 
 
 # Static files (CSS, JavaScript, Images)

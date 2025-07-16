@@ -1,3 +1,10 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load cart_tags %}
+
+{% block title %}Product Catalog{% endblock %}
+
+{% block content %}
 <h1>Product Catalog</h1>
 
 <form method="get">
@@ -7,11 +14,19 @@
 
 <ul>
     {% for product in products %}
-    <li>
+    <li style="margin-bottom: 20px;">
         <h3>{{ product.name }}</h3>
-        <p>Price: {{ product.price }}</p>
-        <p>Available: {{ product.available }}</p>
+        <p>Price: {{ product.price }} USD</p>
+        <p>Available: {{ product.available|yesno:"Yes,No" }}</p>
         <p>Category: {{ product.category.name }}</p>
+
+        <form
+            hx-post="{% url 'orders:add_to_cart' product.id %}"
+            hx-target="#cart-count"
+            hx-swap="outerHTML">
+            {% csrf_token %}
+            <button type="submit">Add to cart</button>
+        </form>
     </li>
     {% empty %}
     <li>No products found.</li>
@@ -19,13 +34,16 @@
 </ul>
 
 {% if is_paginated %}
-    <div>
+    <div class="pagination">
         {% if page_obj.has_previous %}
             <a href="?{{ request.GET.urlencode }}&page={{ page_obj.previous_page_number }}">Previous</a>
         {% endif %}
+
         Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+
         {% if page_obj.has_next %}
             <a href="?{{ request.GET.urlencode }}&page={{ page_obj.next_page_number }}">Next</a>
         {% endif %}
     </div>
 {% endif %}
+{% endblock %}

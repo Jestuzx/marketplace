@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block title %}Profile{% endblock %}
+
+{% block content %}
+<h1>Your Profile</h1>
+
+<p><strong>Username:</strong> {{ user.username }}</p>
+<p><strong>Email:</strong> {{ user.email }}</p>
+
+<h2>Your Orders</h2>
+{% if orders %}
+    <ul>
+    {% for order in orders %}
+        <li>
+            Order #{{ order.id }} — {{ order.created_at|date:"Y-m-d H:i" }} — Status: {{ order.get_status_display }}
+            <a href="{% url 'orders:order_detail' order.id %}">Details</a>
+        </li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>You have no orders yet.</p>
+{% endif %}
+
+{% endblock %}
