@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
-from .models import CustomUser
+from .models import CustomUser, SellerReview
 
 class CustomUserCreationForm(UserCreationForm):
     class Meta:
@@ -16,3 +16,12 @@ class CustomUserCreationForm(UserCreationForm):
             self.add_error('store_name', 'Store name is required for sellers.')
 
         return cleaned_data
+    
+class SellerReviewForm(forms.ModelForm):
+    class Meta:
+        model = SellerReview
+        fields = ['rating', 'comment']
+        widgets = {
+            'rating': forms.NumberInput(attrs={'min': 1, 'max': 5}),
+            'comment': forms.Textarea(attrs={'rows': 3}),
+        }

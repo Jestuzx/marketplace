@@ -20,6 +20,8 @@
         <p>Available: {{ product.available|yesno:"Yes,No" }}</p>
         <p>Category: {{ product.category.name }}</p>
 
+        <p><a href="{% url 'products:product_detail' product.id %}">View Details / Reviews</a></p>
+
         <form
             hx-post="{% url 'orders:add_to_cart' product.id %}"
             hx-target="#cart-count"
@@ -32,6 +34,7 @@
     <li>No products found.</li>
     {% endfor %}
 </ul>
+
 
 {% if is_paginated %}
     <div class="pagination">

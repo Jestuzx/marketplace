@@ -1,14 +1,15 @@
-from django.views.generic import ListView, View
+from django.views.generic import ListView, View, DetailView
 from django_filters.views import FilterView
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy, reverse
 from django.shortcuts import redirect
 from django.core.exceptions import PermissionDenied
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.views.generic import CreateView
+from django.views.generic.edit import FormMixin
 
-from .models import Product, Category
+from .models import Product, Category, ProductReview
 from .filters import ProductFilter
-from .forms import ProductForm, CategoryForm
+from .forms import ProductForm, CategoryForm, ProductReviewForm
 
 class ProductListView(FilterView, ListView):
     model = Product
@@ -45,7 +46,7 @@ class ProductCreateView(LoginRequiredMixin, SellerRequiredMixin, CreateView):
     success_url = reverse_lazy('products:product_list')
 
     def form_valid(self, form):
-        form.instance.seller = self.request.user  # автоматически ставим продавца
+        form.instance.seller = self.request.user 
         return super().form_valid(form)
     
 
@@ -57,3 +58,40 @@ class CategoryCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
 
     def test_func(self):
         return self.request.user.is_authenticated and self.request.user.user_type == 'seller'
+
+class ProductDetailView(LoginRequiredMixin, FormMixin, DetailView):
+    model = Product
+    template_name = 'products/product_detail.html'
+    context_object_name = 'product'
+    form_class = ProductReviewForm
+    pk_url_kwarg = 'pk'
+
+    def get_success_url(self):
+        return reverse('products:product_detail', kwargs={'pk': self.object.pk})
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        try:
+            existing_review = ProductReview.objects.get(product=self.get_object(), user=self.request.user)
+            kwargs['instance'] = existing_review
+        except ProductReview.DoesNotExist:
+            pass
+        return kwargs
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['reviews'] = self.object.reviews.all()
+        context['form'] = self.get_form()
+        return context
+
+    def post(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        form = self.get_form()
+        if form.is_valid():
+            ProductReview.objects.update_or_create(
+                product=self.object,
+                user=request.user,
+                defaults=form.cleaned_data
+            )
+            return super().form_valid(form)
+        return self.form_invalid(form)
