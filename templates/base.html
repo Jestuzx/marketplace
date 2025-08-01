@@ -25,7 +25,7 @@
 
             <a href="{% url 'profile' %}">Profile</a> |
 
-            <span>{% trans "Welcome" %}, {{ user.username }}!</span>
+            <span>{% translate "Welcome" %}, {{ user.username }}!</span>
 
             <form method="post" action="{% url 'logout' %}" style="display:inline; margin-left: 10px;">
                 {% csrf_token %}
