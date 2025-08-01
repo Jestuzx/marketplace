@@ -1,10 +1,12 @@
 <!DOCTYPE html>
+{% load i18n %}
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>{% block title %}Marketplace{% endblock %}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <script src="https://unpkg.com/htmx.org@1.9.3"></script>
+        
 
 </head>
 <body>
@@ -23,7 +25,7 @@
 
             <a href="{% url 'profile' %}">Profile</a> |
 
-            <span>Welcome, {{ user.username }}!</span>
+            <span>{% trans "Welcome" %}, {{ user.username }}!</span>
 
             <form method="post" action="{% url 'logout' %}" style="display:inline; margin-left: 10px;">
                 {% csrf_token %}
@@ -31,6 +33,22 @@
                     Logout
                 </button>
             </form>
+
+           <form action="{% url 'set_language' %}" method="post">
+            {% csrf_token %}
+            <select name="language">
+                {% get_current_language as LANGUAGE_CODE %}
+                {% get_available_languages as LANGUAGES %}
+                {% get_language_info_list for LANGUAGES as languages %}
+                {% for language in languages %}
+            <option value="{{ language.code }}" {% if language.code == LANGUAGE_CODE %}selected{% endif %}>
+                {{ language.name_local }}
+            </option>
+        {% endfor %}
+    </select>
+    <input type="submit" value="{% trans 'Change language' %}">
+</form>
+
         {% else %}
             <a href="{% url 'login' %}">Login</a> |
             <a href="{% url 'register' %}">Register</a>

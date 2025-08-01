@@ -8,5 +8,6 @@ urlpatterns = [
     path('users/', include('users.urls')),
     path('products/', include('products.urls', namespace='products')),
     path('orders/', include(('orders.urls', 'orders'), namespace='orders')),
+    path('i18n/', include('django.conf.urls.i18n')),
 
 ]

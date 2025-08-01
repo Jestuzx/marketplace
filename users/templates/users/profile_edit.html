@@ -1,0 +1,32 @@
+<form hx-post="{% url 'profile-edit' %}" hx-target="#profile-form" hx-swap="outerHTML" enctype="multipart/form-data" id="profile-form">
+  {% csrf_token %}
+
+  <h3>User Data</h3>
+  {{ user_form.email.label_tag }}
+  {{ user_form.email }}
+
+  {{ user_form.first_name.label_tag }}
+  {{ user_form.first_name }}
+
+  {{ user_form.last_name.label_tag }}
+  {{ user_form.last_name }}
+
+  <hr>
+
+  {% if seller_form %}
+    <h3>Seller Profile</h3>
+    {{ seller_form.store_name.label_tag }}
+    {{ seller_form.store_name }}
+
+    {{ seller_form.description.label_tag }}
+    {{ seller_form.description }}
+
+    {{ seller_form.avatar.label_tag }}
+    {{ seller_form.avatar }}
+
+    {{ seller_form.payment_info.label_tag }}
+    {{ seller_form.payment_info }}
+  {% endif %}
+
+  <button type="submit" class="btn btn-primary mt-3">Save</button>
+</form>

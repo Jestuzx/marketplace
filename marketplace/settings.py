@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     "users",
     "products",
     "orders",
+    "rest_framework",
     
 ]
 
@@ -111,12 +112,20 @@ AUTH_PASSWORD_VALIDATORS = [
 # https://docs.djangoproject.com/en/5.2/topics/i18n/
 
 LANGUAGE_CODE = "en-us"
+LANGUAGES = [
+    ('en', 'English'),
+    ('uk', 'Ukrainian')
+]
 
 TIME_ZONE = "UTC"
 
 USE_I18N = True
 
 USE_TZ = True
+LOCAL_PATHS = (
+    BASE_DIR / 'locale'
+)
+
 
 LOGIN_URL = 'login'
 LOGIN_REDIRECT_URL = '/users/profile/'

@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load i18n %}
 
 {% block title %}Profile{% endblock %}
 
@@ -8,7 +9,9 @@
 <p><strong>Username:</strong> {{ user.username }}</p>
 <p><strong>Email:</strong> {{ user.email }}</p>
 
-<h2>Your Orders</h2>
+<a href="{% url 'profile-edit' %}" class="btn btn-primary">Edit Profile</a>
+
+<h2>{% trans "Your Orders" %}</h2>
 {% if orders %}
     <ul>
     {% for order in orders %}

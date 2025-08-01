@@ -42,3 +42,14 @@ class SellerReview(models.Model):
 
     def __str__(self):
         return f"{self.buyer.username} → {self.seller.username} ({self.rating})"
+    
+
+class SellerProfile(models.Model):
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    avatar = models.ImageField(upload_to='avatars/', blank=True, null=True)
+    store_name = models.CharField(max_length=255, default='')
+    description = models.TextField(blank=True)
+    payment_info = models.CharField(max_length=255, blank=True) 
+
+    def __str__(self):
+        return self.user.username
