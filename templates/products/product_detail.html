@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ product.name }}{% endblock %}
+
+{% block content %}
+<h2>{{ product.name }}</h2>
+<p>{{ product.description }}</p>
+<p>Price: {{ product.price }} USD</p>
+<p>Category: {{ product.category.name }}</p>
+
+<h3>Leave a review</h3>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Submit Review</button>
+</form>
+
+<h3>Product Reviews</h3>
+<ul>
+    {% for review in reviews %}
+        <li><strong>{{ review.user.username }}</strong>: {{ review.rating }}/5<br>{{ review.comment }}</li>
+    {% empty %}
+        <li>No reviews yet.</li>
+    {% endfor %}
+</ul>
+
+<a href="{% url 'products:product_list' %}">← Back to catalog</a>
+{% endblock %}
