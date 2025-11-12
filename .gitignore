@@ -21,4 +21,5 @@ media/
 *.log
 
 # Avatars folder
-marketplace-main/avatars/
+avatars/
+
