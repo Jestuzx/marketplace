@@ -1,16 +1,12 @@
 from django.urls import path
-from .views import UserRegisterView, UserLoginView, UserLogoutView, ProfileView, SellerProfileView, ProfileEditView
-from django.conf import settings
-from django.conf.urls.static import static
+from .views import AuthView, ProfileView, ProfileEditView, SellerProfileView, SellerProfileEditView
+from django.contrib.auth.views import LogoutView
 
 urlpatterns = [
-    path('register/', UserRegisterView.as_view(), name='register'),
-    path('login/', UserLoginView.as_view(), name='login'),
-    path('logout/', UserLogoutView.as_view(), name='logout'),
+    path('auth/', AuthView.as_view(), name='auth'),
+    path('logout/', LogoutView.as_view(next_page='auth'), name='logout'),
     path('profile/', ProfileView.as_view(), name='profile'),
-    path('seller/<int:seller_id>/', SellerProfileView.as_view(), name='seller_profile'),
-    path('profile/edit/', ProfileEditView.as_view(), name='profile-edit'),
+    path('profile/edit/', ProfileEditView.as_view(), name='profile_edit'),
+    path('seller/profile/', SellerProfileView.as_view(), name='seller_profile'),
+    path('seller/profile/edit/', SellerProfileEditView.as_view(), name='seller_profile_edit'),
 ]
-
-if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
