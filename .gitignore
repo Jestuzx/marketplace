@@ -22,3 +22,5 @@ media/
 
 # Avatars folder
 avatars/
+
+.env
