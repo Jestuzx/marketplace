@@ -4,7 +4,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from ..forms import UserForm, SellerProfileForm
-from ..models import CustomUser, SellerProfile
+from ..models import SellerProfile
 from orders.models import Order
 from django.http import HttpResponse
 
