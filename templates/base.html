@@ -13,7 +13,10 @@
 
 <header>
     <nav>
-        <a href="/">Home</a> |
+         <button onclick="location.href='/'"
+                style="padding:6px 12px; border:1px solid #ccc; background:#f5f5f5; border-radius:4px; cursor:pointer;">
+            Home
+        </button> |
         <a href="{% url 'products:product_list' %}">Catalog</a> |
         <a href="{% url 'orders:create_order' %}">Cart</a> |
 

@@ -7,21 +7,23 @@ from ..models import SellerProfile
 from ..serializers import SellerProfileSerializer
 
 
-class SellerProfileView(APIView):
+class BaseSellerProfileView(APIView):
     permission_classes = [IsAuthenticated]
     parser_classes = [MultiPartParser, FormParser]
+    template_name = None
+
+    def get_profile(self, user):
+        profile, _ = SellerProfile.objects.get_or_create(user=user)
+        return profile
 
     def get(self, request):
-        profile, _ = SellerProfile.objects.get_or_create(user=request.user)
+        profile = self.get_profile(request.user)
         serializer = SellerProfileSerializer(profile)
-        return render(
-            request,
-            "users/seller_profile_form.html",
-            {"serializer": serializer, "profile": profile},
-        )
+        return render(request, self.template_name,
+                       {"serializer": serializer, "profile": profile})
 
     def post(self, request):
-        profile, _ = SellerProfile.objects.get_or_create(user=request.user)
+        profile = self.get_profile(request.user)
         serializer = SellerProfileSerializer(profile, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
@@ -29,23 +31,9 @@ class SellerProfileView(APIView):
         return Response(serializer.errors, status=400)
 
 
-class SellerProfileEditView(APIView):
-    permission_classes = [IsAuthenticated]
-    parser_classes = [MultiPartParser, FormParser]
+class SellerProfileView(BaseSellerProfileView):
+    template_name = "users/seller_profile_form.html"
 
-    def get(self, request):
-        profile, _ = SellerProfile.objects.get_or_create(user=request.user)
-        serializer = SellerProfileSerializer(profile)
-        return render(
-            request,
-            "users/seller_profile_edit.html",
-            {"serializer": serializer, "profile": profile},
-        )
 
-    def post(self, request):
-        profile, _ = SellerProfile.objects.get_or_create(user=request.user)
-        serializer = SellerProfileSerializer(profile, data=request.data, partial=True)
-        if serializer.is_valid():
-            serializer.save()
-            return Response({"success": True})
-        return Response(serializer.errors, status=400)
+class SellerProfileEditView(BaseSellerProfileView):
+    template_name = "users/seller_profile_edit.html"
