@@ -1,11 +1,16 @@
 {% extends 'base.html' %}
-{% load static %}
 {% load cart_tags %}
+{% load static %}
+
 
 {% block title %}Product Catalog{% endblock %}
 
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/products.css' %}">
+{% endblock %}
+
 {% block content %}
-<h1 style="text-align: center; margin-bottom: 20px;">Product Catalog</h1>
+<h1 class="catalog-title">Product Catalog</h1>
 
 <div class="catalog-wrapper">
     <!-- Левая колонка: фильтры -->
@@ -49,83 +54,4 @@
         {% include 'products/products_grid_partial.html' %}
     </div>
 </div>
-
-<style>
-    /* Основной контейнер каталога */
-.catalog-wrapper {
-    display: flex;
-    gap: 20px; /* расстояние между колонками */
-    align-items: flex-start;
-}
-
-/* Левая колонка: фильтры */
-.filters {
-    width: 250px; /* фиксированная ширина фильтров */
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    background: #f9f9f9;
-    position: sticky;   /* фильтры "липкие" при прокрутке */
-    top: 20px;
-}
-
-/* Правая колонка: товары */
-.products-grid {
-    flex: 1; /* занимает оставшееся место */
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-    gap: 20px; /* расстояние между карточками */
-}
-
-/* Отдельная карточка товара */
-.product-card {
-    border: 1px solid #ddd;
-    padding: 10px;
-    border-radius: 8px;
-    text-align: center;
-    background: #f9f9f9;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-}
-
-/* Картинка товара */
-.product-card img {
-    max-width: 100%;
-    height: auto;
-    margin-bottom: 10px;
-}
-
-/* Кнопка добавить в корзину */
-.product-card button {
-    margin-top: 10px;
-    padding: 5px 10px;
-    border: none;
-    background-color: #4CAF50;
-    color: white;
-    cursor: pointer;
-    border-radius: 4px;
-}
-
-.product-card button:hover {
-    background-color: #45a049;
-}
-
-/* Стили для пагинации */
-.pagination {
-    margin-top: 20px;
-    text-align: center;
-}
-
-.pagination a {
-    margin: 0 5px;
-    text-decoration: none;
-    color: #007bff;
-}
-
-.pagination a:hover {
-    text-decoration: underline;
-}
-
-</style>
 {% endblock %}

@@ -3,7 +3,7 @@
     <div class="product-card">
         <h3>{{ product.name }}</h3>
         {% if product.image %}
-        <img src="{{ product.image.url }}" alt="{{ product.name }}" style="max-width:100%; height:auto; margin-bottom:10px;">
+        <img src="{{ product.image.url }}" alt="{{ product.name }}">
         {% endif %}
         <p>Price: {{ product.price }} USD</p>
         <p>Available: {{ product.available|yesno:"Yes,No" }}</p>
