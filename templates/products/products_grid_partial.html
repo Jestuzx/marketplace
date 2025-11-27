@@ -1,0 +1,21 @@
+<div class="products-grid">
+    {% for product in products %}
+    <div class="product-card">
+        <h3>{{ product.name }}</h3>
+        {% if product.image %}
+        <img src="{{ product.image.url }}" alt="{{ product.name }}" style="max-width:100%; height:auto; margin-bottom:10px;">
+        {% endif %}
+        <p>Price: {{ product.price }} USD</p>
+        <p>Available: {{ product.available|yesno:"Yes,No" }}</p>
+        <p>Category: {{ product.category.name }}</p>
+        <p><a href="{% url 'products:product_detail' product.id %}">View Details / Reviews</a></p>
+
+        <form hx-post="{% url 'orders:add_to_cart' product.id %}" hx-target="#cart-count" hx-swap="outerHTML">
+            {% csrf_token %}
+            <button type="submit">Add to cart</button>
+        </form>
+    </div>
+    {% empty %}
+    <p>No products found.</p>
+    {% endfor %}
+</div>
