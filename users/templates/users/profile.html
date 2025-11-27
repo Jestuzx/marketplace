@@ -1,28 +1,44 @@
 {% extends 'base.html' %}
+{% load static %}
 {% load i18n %}
 
 {% block title %}Profile{% endblock %}
 
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/profile.css' %}">
+{% endblock %}
+
 {% block content %}
-<h1>Your Profile</h1>
+<div class="container">
+    <div class="login-section">
+        <header>Your Profile</header>
 
-<p><strong>Username:</strong> {{ user.username }}</p>
-<p><strong>Email:</strong> {{ user.email }}</p>
+        <form>
+            <p><strong>Full name:</strong> {{ user.first_name }} {{ user.last_name }}</p>
+            <p><strong>Username:</strong> {{ user.username }}</p>
+            <p><strong>Email:</strong> {{ user.email }}</p>
 
-<a href="{% url 'profile_edit' %}" class="btn btn-primary">Edit Profile</a>
+            <a href="{% url 'profile_edit' %}" class="btn">Edit Profile</a>
+        </form>
 
-<h2>{% trans "Your Orders" %}</h2>
-{% if orders %}
-    <ul>
-    {% for order in orders %}
-        <li>
-            Order #{{ order.id }} — {{ order.created_at|date:"Y-m-d H:i" }} — Status: {{ order.get_status_display }}
-            <a href="{% url 'orders:order_detail' order.id %}">Details</a>
-        </li>
-    {% endfor %}
-    </ul>
-{% else %}
-    <p>You have no orders yet.</p>
-{% endif %}
+        <div class="separator">
+            <div class="line"></div>
+            <p>{% trans "Your Orders" %}</p>
+            <div class="line"></div>
+        </div>
 
+        {% if orders %}
+        <ul class="order-list">
+            {% for order in orders %}
+            <li>
+                Order #{{ order.id }} — {{ order.created_at|date:"Y-m-d H:i" }} — Status: {{ order.get_status_display }}
+                <a href="{% url 'orders:order_detail' order.id %}">Details</a>
+            </li>
+            {% endfor %}
+        </ul>
+        {% else %}
+            <p style="margin-top:20px; color:#fff;">You have no orders yet.</p>
+        {% endif %}
+    </div>
+</div>
 {% endblock %}

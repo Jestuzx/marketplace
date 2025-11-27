@@ -6,11 +6,11 @@ from django.core.exceptions import PermissionDenied
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.views.generic import CreateView
 from django.views.generic.edit import FormMixin
-
+from storages.backends.s3boto3 import S3Boto3Storage
 from .models import Product, Category, ProductReview
 from .filters import ProductFilter
 from .forms import ProductForm, CategoryForm, ProductReviewForm
-
+from django.core.files.storage import default_storage
 
 class ProductListView(FilterView, ListView):
     model = Product
@@ -19,14 +19,12 @@ class ProductListView(FilterView, ListView):
     filterset_class = ProductFilter
     paginate_by = 10
 
-
 class AddToCartView(View):
     def post(self, request, product_id):
         cart = request.session.get("cart", {})
         cart[str(product_id)] = cart.get(str(product_id), 0) + 1
         request.session["cart"] = cart
         return redirect("product_list")
-
 
 class RemoveFromCartView(View):
     def post(self, request, product_id):
@@ -36,13 +34,11 @@ class RemoveFromCartView(View):
             request.session["cart"] = cart
         return redirect("orders:create_order")
 
-
 class SellerRequiredMixin:
     def dispatch(self, request, *args, **kwargs):
         if not request.user.is_authenticated or request.user.user_type != "seller":
             raise PermissionDenied("Only sellers can add products.")
         return super().dispatch(request, *args, **kwargs)
-
 
 class ProductCreateView(LoginRequiredMixin, SellerRequiredMixin, CreateView):
     model = Product
@@ -53,7 +49,6 @@ class ProductCreateView(LoginRequiredMixin, SellerRequiredMixin, CreateView):
     def form_valid(self, form):
         form.instance.seller = self.request.user
         return super().form_valid(form)
-
 
 class CategoryCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
     model = Category
@@ -66,7 +61,6 @@ class CategoryCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
             self.request.user.is_authenticated
             and self.request.user.user_type == "seller"
         )
-
 
 class ProductDetailView(LoginRequiredMixin, FormMixin, DetailView):
     model = Product
@@ -97,10 +91,25 @@ class ProductDetailView(LoginRequiredMixin, FormMixin, DetailView):
 
     def post(self, request, *args, **kwargs):
         self.object = self.get_object()
-        form = self.get_form()
-        if form.is_valid():
+
+        review_form = self.get_form()
+        product_form = ProductForm(request.POST, request.FILES, instance=self.object)
+
+        # Сохраняем отзыв
+        if review_form.is_valid():
             ProductReview.objects.update_or_create(
-                product=self.object, user=request.user, defaults=form.cleaned_data
+                product=self.object,
+                user=request.user,
+                defaults=review_form.cleaned_data
             )
-            return super().form_valid(form)
-        return self.form_invalid(form)
+
+        if product_form.is_valid():
+            s3 = S3Boto3Storage()
+            image = product_form.cleaned_data.get("image")
+            if image:
+                self.object.image.save(image.name, image, save=True, storage=s3)
+            else:
+                product_form.save()
+
+        return super().form_valid(review_form)
+print("Current default storage:", default_storage.__class__)

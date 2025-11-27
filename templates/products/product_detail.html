@@ -4,6 +4,13 @@
 
 {% block content %}
 <h2>{{ product.name }}</h2>
+
+{% if product.image %}
+    <img src="{{ product.image.url }}" alt="{{ product.name }}">
+{% else %}
+    <p>No image available</p>
+{% endif %}
+
 <p>{{ product.description }}</p>
 <p>Price: {{ product.price }} USD</p>
 <p>Category: {{ product.category.name }}</p>

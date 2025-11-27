@@ -13,12 +13,17 @@ class SellerProfileMixin:
     def get_seller_form(self, request, instance=None):
         if not self.seller_form_class:
             return None
-        return self.seller_form_class(request.POST or None, request.FILES or None
-                                      , instance=instance)
+        return self.seller_form_class(
+            request.POST or None,
+            request.FILES or None,
+            instance=instance
+        )
 
     def handle_forms(self, request, main_form, template_name):
-        seller_form = self.get_seller_form(request,
-                                           instance=self.get_seller_profile(request.user))
+        seller_form = self.get_seller_form(
+            request,
+            instance=self.get_seller_profile(request.user)
+        )
 
         if main_form.is_valid() and (seller_form is None or seller_form.is_valid()):
             main_form.save()
@@ -29,10 +34,13 @@ class SellerProfileMixin:
                 response = HttpResponse()
                 response["HX-Redirect"] = reverse("profile")
                 return response
+
             return redirect("profile")
 
-        return render(request, template_name, {"form": main_form,
-                                               "seller_form": seller_form})
+        return render(request, template_name, {
+            "user_form": main_form,
+            "seller_form": seller_form,
+        })
 
 class SellerProfileDRFMixin:
 

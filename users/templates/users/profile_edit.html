@@ -1,11 +1,19 @@
-<form hx-post="{% url 'profile_edit' %}" hx-target="#profile-form" hx-swap="outerHTML" enctype="multipart/form-data" id="profile-form">
+<form
+  hx-post="{% url 'profile_edit' %}"
+  hx-target="#profile-form"
+  hx-swap="outerHTML"
+  hx-encoding="multipart/form-data"
+  enctype="multipart/form-data"
+  id="profile-form"
+>
   {% csrf_token %}
-
+  <script src="https://unpkg.com/htmx.org@1.9.12"></script>
   <button type="submit" class="btn btn-primary mb-3">Save</button>
 
   <h3>User Data</h3>
+
   {{ user_form.email.label_tag }}
-  {{ form.email }}
+  {{ user_form.email }}
 
   {{ user_form.first_name.label_tag }}
   {{ user_form.first_name }}
@@ -17,6 +25,7 @@
 
   {% if seller_form %}
     <h3>Seller Profile</h3>
+
     {{ seller_form.store_name.label_tag }}
     {{ seller_form.store_name }}
 
