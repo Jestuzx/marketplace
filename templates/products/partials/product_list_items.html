@@ -1,22 +1,33 @@
 <div class="products-grid">
-
-    {% for product in products %}
+  {% for product in products %}
     <div class="product-card">
-
-        <img src="{{ product.image.url }}" alt="{{ product.name }}" class="product-image">
-
+        <div class="image-wrapper">
+          <img src="{{ product.image.url }}" alt="{{ product.name }}">
+        </div>
         <h3>{{ product.name }}</h3>
-
-        <p class="price">{{ product.price }} PLN</p>
-
-        <a href="{% url 'products:product_detail' product.pk %}" class="btn-view">
-            View
-        </a>
+        <p class="price">{{ product.price|floatformat:2 }} PLN</p>
+        <div style="display:flex; gap:8px; justify-content:center; flex-wrap:wrap; margin-top:5px;">
+            <a href="{% url 'products:product_detail' product.id %}"
+                style="
+                    display: inline-block;
+                    padding: 2px 10px;           /* вертикальные и горизонтальные отступы разные */
+                    font-size: 12px;
+                    line-height: 1.2;            /* чуть больше, чтобы текст не слипался */
+                    border-radius: 3px;
+                    border: 1px solid #246cca;
+                    color: #244bca;
+                    text-decoration: none;
+                    white-space: nowrap;
+                    text-align: center;           /* текст по центру */
+                ">
+                Подробнее
+            </a>
+            <form method="POST" action="{% url 'orders:add_to_cart' product.id %}" style="display:flex; align-items:center; gap:4px;">
+              {% csrf_token %}
+              <input type="number" name="quantity" value="1" min="1" style="width:50px; font-size:12px; padding:2px;">
+              <button type="submit" style="padding:3px 6px; font-size:12px; border-radius:4px;">Add</button>
+            </form>
+        </div>
     </div>
-    {% endfor %}
-
-    {% if products|length == 0 %}
-    <p>Ничего не найдено</p>
-    {% endif %}
-
+  {% endfor %}
 </div>

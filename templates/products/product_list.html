@@ -7,25 +7,48 @@
 
 {% block content %}
 
-<h2>Products</h2>
+<!-- Верхний ряд: заголовок, поиск, категории -->
+<div class="products-header" style="display: flex; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: wrap; margin-bottom: 20px;">
+    <h2 style="margin:0;">Products</h2>
 
-<!-- ====== Форма поиска (динамический поиск) ====== -->
-<form id="search-form"
-      hx-get="{% url 'products:sort_partial' %}"
-      hx-target="#product-list"
-      hx-trigger="keyup changed delay:300ms"
-      hx-swap="innerHTML">
-    <input type="text" name="search" placeholder="Поиск..." value="{{ request.GET.search }}">
-</form>
+    <!-- Поиск -->
+    <form id="search-form"
+          hx-get="{% url 'products:sort_partial' %}"
+          hx-target="#product-list"
+          hx-trigger="keyup changed delay:300ms"
+          hx-swap="innerHTML"
+          style="flex:1; min-width:200px;">
+        <input type="text" name="search" placeholder="Поиск..." value="{{ request.GET.search }}" style="width:100%; padding:6px 10px;">
+    </form>
 
-<!-- ====== Блок сортировки ====== -->
-<div id="sort-container">
-    {% include "products/partials/sort_control.html" %}
+    <!-- Категории -->
+    <div class="categories" style="display:flex; gap:10px; flex-wrap: wrap;">
+        {% for category in categories %}
+            <a href="{% url 'products:category' category.slug %}"
+               style="text-decoration:none; padding:5px 10px; border:1px solid #007bff; border-radius:5px; color:#007bff;">
+               {{ category.name }}
+            </a>
+        {% endfor %}
+    </div>
 </div>
 
-<!-- ====== Контейнер для товаров ====== -->
-<div id="product-list">
-    {% include "products/partials/product_list_items.html" %}
+<!-- Основной блок: фильтры слева, товары справа -->
+<div class="products-page" style="display:flex; gap:20px; align-items:flex-start;">
+
+    <!-- Левая колонка: фильтры -->
+    <div class="filters-column" style="width:250px; flex-shrink:0;">
+        <div id="sort-container">
+            {% include "products/partials/sort_control.html" %}
+        </div>
+    </div>
+
+    <!-- Правая колонка: товары -->
+    <div class="products-column" style="flex:1;">
+        <div id="product-list">
+            {% include "products/partials/product_list_items.html" %}
+        </div>
+    </div>
+
 </div>
 
 {% endblock %}

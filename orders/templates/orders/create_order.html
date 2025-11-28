@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block extend_css %}
+<link rel="stylesheet" href="{% static 'css/cart.css' %}">
+{% endblock %}
+
+{% block content %}
+<h2>Create Order</h2>
+
+<div id="cart-table" class="cart-grid">
+    {% for product in products %}
+        <div class="cart-item">
+            <div class="cart-image">
+                <img src="{{ product.image.url }}" alt="{{ product.name }}">
+            </div>
+            <div class="cart-info">
+                <h4>{{ product.name }}</h4>
+                <p class="price">{{ product.price|floatformat:2 }} PLN</p>
+                <span>Quantity: {{ cart.product.id }} </span>
+            </div>
+        </div>
+    {% empty %}
+        <p>Your cart is empty.</p>
+    {% endfor %}
+</div>
+
+<form method="post">
+    {% csrf_token %}
+    <div class="checkout-form">
+        <label for="address">Address:</label>
+        <input type="text" name="address" id="address" required>
+
+        <label for="phone">Phone:</label>
+        <input type="text" name="phone" id="phone" required>
+
+        <label for="payment_method">Payment method:</label>
+        <select name="payment_method" id="payment_method" required>
+            <option value="card">Card</option>
+            <option value="cash">Cash</option>
+        </select>
+
+        <button type="submit" class="nav-btn">Confirm Order</button>
+    </div>
+</form>
+{% endblock %}

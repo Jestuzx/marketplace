@@ -68,3 +68,37 @@ class ProductDetailView(DetailView):
     model = Product
     template_name = "products/product_detail.html"
     context_object_name = "product"
+
+class CategoryProductsView(ListView):
+    model = Product
+    template_name = "products/product_list.html"
+    context_object_name = "products"
+    paginate_by = 10
+
+    def get_queryset(self):
+        slug = self.kwargs.get("slug")
+        queryset = Product.objects.filter(category__slug=slug)
+        # Можно добавить фильтр и сортировку, как в ProductListView
+        self.filterset = ProductFilter(self.request.GET, queryset=queryset)
+        queryset = self.filterset.qs
+
+        sort = self.request.GET.get("sort")
+        sort_options = {
+            "price_asc": "price",
+            "price_desc": "-price",
+            "name_asc": "name",
+            "name_desc": "-name",
+            "newest": "-created_at",
+            "oldest": "created_at",
+        }
+        if sort in sort_options:
+            queryset = queryset.order_by(sort_options[sort])
+
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["filter"] = self.filterset
+        context["categories"] = Category.objects.all()
+        context["current_category"] = self.kwargs.get("slug")
+        return context

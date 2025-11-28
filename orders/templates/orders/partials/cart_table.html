@@ -1,33 +1,36 @@
-<table>
-    <tr>
-        <th>Product</th>
-        <th>Qty</th>
-        <th>Price</th>
-        <th>Total</th>
-    </tr>
-    {% for product in products %}
-    <tr>
-        <td>{{ product.name }}</td>
-        <td>
-            <form hx-post="{% url 'update_cart' product.id %}" hx-target="#cart-table" hx-swap="outerHTML">
-                {% csrf_token %}
-                <input type="hidden" name="action" value="remove">
-                <button type="submit">-</button>
-            </form>
-            {{ cart|get_item:product.id }}
-            <form hx-post="{% url 'update_cart' product.id %}" hx-target="#cart-table" hx-swap="outerHTML">
-                {% csrf_token %}
-                <input type="hidden" name="action" value="add">
-                <button type="submit">+</button>
-            </form>
-        </td>
-        <td>{{ product.price }}</td>
-        <td>{{ product.price|floatformat:2|add:""|floatformat:2|floatformat }} usd</td>
-    </tr>
-    {% endfor %}
+<table class="table table-bordered align-middle text-center">
+    <thead class="table-light">
+        <tr>
+            <th scope="col">Product</th>
+            <th scope="col">Quantity</th>
+            <th scope="col">Price</th>
+            <th scope="col">Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for product in products %}
+        <tr>
+            <td>{{ product.name }}</td>
+            <td>
+                <form method="post" action="{% url 'orders:update_cart' product.id %}" class="d-flex justify-content-center align-items-center gap-2">
+                    {% csrf_token %}
+                    <button name="action" value="remove" class="btn btn-sm btn-outline-secondary">-</button>
+                    <span>{{ cart|get_item:product.id }}</span>
+                    <button name="action" value="add" class="btn btn-sm btn-outline-secondary">+</button>
+                </form>
+            </td>
+            <td>{{ product.price|floatformat:2 }} PLN</td>
+            <td>
+                <form method="post" action="{% url 'orders:update_cart' product.id %}">
+                    {% csrf_token %}
+                    <button name="action" value="delete" class="btn btn-sm btn-danger">Delete</button>
+                </form>
+            </td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="4">Your cart is empty.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
 </table>
-
-<p>
-    <strong>Total:</strong>
-    {{ products|calc_total:cart }} usd
-</p>

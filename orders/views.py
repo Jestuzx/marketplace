@@ -1,55 +1,15 @@
 from django.views import View
-from django.shortcuts import redirect, get_object_or_404, render
+from django.shortcuts import render, redirect, get_object_or_404
 from .models import Order, OrderItem, Product
 from django.contrib.auth.mixins import LoginRequiredMixin
-
-
-class CreateOrderView(LoginRequiredMixin, View):
-    def get(self, request):
-        cart = request.session.get("cart", {})
-        products = Product.objects.filter(id__in=cart.keys())
-        total = sum(p.price * cart[str(p.id)] for p in products)
-        return render(
-            request,
-            "orders/create_order.html",
-            {"products": products, "cart": cart, "total": total},
-        )
-
-    def post(self, request):
-        cart = request.session.get("cart", {})
-        if not cart:
-            return redirect("products:product_list")
-
-        order = Order.objects.create(buyer=request.user, total_price=0)
-        total_price = 0
-
-        for product_id, quantity in cart.items():
-            product = get_object_or_404(Product, pk=product_id)
-            price = product.price * quantity
-            OrderItem.objects.create(
-                order=order, product=product, quantity=quantity, price=price
-            )
-            total_price += price
-
-        order.total_price = total_price
-        order.save()
-
-        request.session["cart"] = {}
-
-        return redirect("orders:order_detail", pk=order.pk)
-
-
-class OrderDetailView(LoginRequiredMixin, View):
-    def get(self, request, pk):
-        order = get_object_or_404(Order, pk=pk, buyer=request.user)
-        return render(request, "orders/order_detail.html", {"order": order})
-
 
 class CartView(View):
     def get(self, request):
         cart = request.session.get("cart", {})
         products = Product.objects.filter(id__in=cart.keys())
-        return render(request, "orders/cart.html", {"products": products, "cart": cart})
+        total = sum(p.price * cart.get(str(p.id), 0) for p in products)
+        return render(request, "orders/cart.html", {"products": products,
+                                                    "cart": cart, "total": total})
 
 
 class UpdateCartView(View):
@@ -64,26 +24,57 @@ class UpdateCartView(View):
                 cart[str(product_id)] -= 1
                 if cart[str(product_id)] <= 0:
                     del cart[str(product_id)]
+        elif action == "delete":
+            if str(product_id) in cart:
+                del cart[str(product_id)]
 
         request.session["cart"] = cart
-
-        products = Product.objects.filter(id__in=cart.keys())
-        return render(
-            request,
-            "orders/partials/cart_table.html",
-            {"products": products, "cart": cart},
-        )
+        return redirect("orders:create_order")
 
 
 def add_to_cart(request, product_id):
-    # product = get_object_or_404(Product, id=product_id)
     cart = request.session.get("cart", {})
-
-    if str(product_id) in cart:
-        cart[str(product_id)] += 1
-    else:
-        cart[str(product_id)] = 1
-
+    quantity = int(request.POST.get("quantity", 1))
+    cart[str(product_id)] = cart.get(str(product_id), 0) + quantity
     request.session["cart"] = cart
+    return redirect("orders:create_order")
 
-    return render(request, "orders/partials/cart_count.html", {"cart": cart})
+
+class CreateOrderView(LoginRequiredMixin, View):
+    def get(self, request):
+        cart = request.session.get("cart", {})
+        products = Product.objects.filter(id__in=cart.keys())
+        total = sum(p.price * cart.get(str(p.id), 0) for p in products)
+        return render(request, "orders/create_order.html",
+                      {"products": products, "cart": cart, "total": total})
+
+    def post(self, request):
+        cart = request.session.get("cart", {})
+        if not cart:
+            return redirect("products:product_list")
+
+        address = request.POST.get("address")
+        phone = request.POST.get("phone")
+        payment_method = request.POST.get("payment_method")
+
+        order = Order.objects.create(
+            buyer=request.user,
+            total_price=0,
+            address=address,
+            phone=phone,
+            payment_method=payment_method
+        )
+
+        total_price = 0
+        for product_id, qty in cart.items():
+            product = get_object_or_404(Product, pk=product_id)
+            price = product.price * qty
+            OrderItem.objects.create(order=order, product=product,
+                                      quantity=qty, price=price)
+            total_price += price
+
+        order.total_price = total_price
+        order.save()
+
+        request.session["cart"] = {}
+        return redirect("orders:order_detail", pk=order.pk)
