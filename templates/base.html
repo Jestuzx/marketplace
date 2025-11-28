@@ -18,7 +18,7 @@
 
 <header>
     <nav>
-         <button class="btn-home" onclick="location.href='/'">Home</button>
+        <button class="btn-home" onclick="location.href='/'">Home</button>
 
         <a href="{% url 'products:product_list' %}">Catalog</a> |
         <a href="{% url 'orders:create_order' %}">Cart</a> |
@@ -40,20 +40,20 @@
                 </button>
             </form>
 
-           <form action="{% url 'set_language' %}" method="post">
-            {% csrf_token %}
-            <select name="language">
-                {% get_current_language as LANGUAGE_CODE %}
-                {% get_available_languages as LANGUAGES %}
-                {% get_language_info_list for LANGUAGES as languages %}
-                {% for language in languages %}
-            <option value="{{ language.code }}" {% if language.code == LANGUAGE_CODE %}selected{% endif %}>
-                {{ language.name_local }}
-            </option>
-        {% endfor %}
-    </select>
-    <input type="submit" value="{% trans 'Change language' %}">
-</form>
+            <form action="{% url 'set_language' %}" method="post">
+                {% csrf_token %}
+                <select name="language">
+                    {% get_current_language as LANGUAGE_CODE %}
+                    {% get_available_languages as LANGUAGES %}
+                    {% get_language_info_list for LANGUAGES as languages %}
+                    {% for language in languages %}
+                        <option value="{{ language.code }}" {% if language.code == LANGUAGE_CODE %}selected{% endif %}>
+                            {{ language.name_local }}
+                        </option>
+                    {% endfor %}
+                </select>
+                <input type="submit" value="{% trans 'Change language' %}">
+            </form>
 
         {% else %}|
             <a href="{% url 'auth' %}">Register or Login</a>
@@ -63,6 +63,8 @@
             {% include 'orders/partials/cart_count.html' %}
         </span>
     </nav>
+
+
 </header>
 
 

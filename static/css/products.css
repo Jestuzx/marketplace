@@ -1,82 +1,11 @@
-/* products.css */
-
-/* ---------------------------
-   Общие стили
---------------------------- */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: 'Poppins', sans-serif;
-}
-
-a {
-    text-decoration: none;
-    color: inherit;
-}
-
-body {
-    background: #f0f0f0;
-}
-
-/* Заголовок каталога */
-.catalog-title {
-    text-align: center;
-    font-size: 32px;
-    margin: 20px 0;
-}
-
-/* ---------------------------
-   Основная обертка
---------------------------- */
-.catalog-wrapper {
-    display: flex;
-    gap: 20px;
-    padding: 20px;
-}
-
-/* ---------------------------
-   Левая колонка: фильтры
---------------------------- */
-.filters {
-    width: 250px;
-    padding: 15px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    background: #f9f9f9;
-    position: sticky;
-    top: 20px;
-    align-self: flex-start;
-}
-
-.filters label {
-    display: block;
-    margin-bottom: 5px;
-    font-weight: 500;
-}
-
-.filters input,
-.filters select {
-    width: 100%;
-    padding: 8px 10px;
-    margin-bottom: 15px;
-    border-radius: 6px;
-    border: 1px solid #ccc;
-}
-
-/* ---------------------------
-   Сетка товаров
---------------------------- */
 .products-grid {
-    display: flex;
-    flex-wrap: wrap;           /* перенос карточек на новую строку */
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
     gap: 20px;
-    flex: 1;
+    padding: 10px 0;
 }
 
-/* Карточка товара */
 .product-card {
-    flex: 0 0 calc(25% - 20px); /* 4 карточки в ряд с учетом gap */
     background: #fff;
     border: 1px solid #ddd;
     border-radius: 8px;
@@ -94,75 +23,35 @@ body {
 }
 
 .product-card img {
-    max-width: 100%;
-    height: auto;
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
     margin-bottom: 10px;
     border-radius: 6px;
 }
 
-.product-card h3 {
-    font-size: 18px;
-    margin-bottom: 10px;
-}
-
-.product-card p {
-    font-size: 14px;
-    margin-bottom: 5px;
-}
-
-.product-card a {
-    font-size: 14px;
-    color: #007BFF;
-    margin-bottom: 10px;
-    display: inline-block;
-}
-
-.product-card a:hover {
-    text-decoration: underline;
-}
-
-.product-card button {
-    margin-top: auto;
-    padding: 8px 12px;
-    border: none;
-    border-radius: 6px;
-    background-color: #4CAF50;
-    color: #fff;
-    font-weight: 500;
-    cursor: pointer;
-    transition: background 0.3s;
-}
-
-.product-card button:hover {
-    background-color: #45a049;
-}
-
-/* ---------------------------
-   Адаптивность
---------------------------- */
 @media (max-width: 1200px) {
-    .product-card {
-        flex: 0 0 calc(33.33% - 20px); /* 3 карточки в ряд */
+    .products-grid {
+        grid-template-columns: repeat(3, 1fr);
     }
 }
 
 @media (max-width: 900px) {
-    .catalog-wrapper {
-        flex-direction: column;
-    }
-    .filters {
-        width: 100%;
-        position: relative;
-        top: 0;
-        margin-bottom: 20px;
-    }
-    .product-card {
-        flex: 0 0 calc(50% - 20px); /* 2 карточки в ряд */
+    .products-grid {
+        grid-template-columns: repeat(2, 1fr);
     }
 }
 
 @media (max-width: 600px) {
-    .product-card {
-        flex: 0 0 100%; /* 1 карточка на всю ширину */
+    .products-grid {
+        grid-template-columns: 1fr;
     }
+}
+
+.product-card img {
+    width: 100%;
+    height: 250px; /* фиксированная высота */
+    object-fit: cover; /* сохраняем пропорции, кадрирование по центру */
+    margin-bottom: 10px;
+    border-radius: 6px;
 }

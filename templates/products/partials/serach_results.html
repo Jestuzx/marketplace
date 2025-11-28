@@ -1,0 +1,9 @@
+<ul>
+{% for product in products %}
+    <li>
+        <a href="{{ product.get_absolute_url }}">{{ product.name }}</a> — {{ product.price }} грн
+    </li>
+{% empty %}
+    <li>Ничего не найдено</li>
+{% endfor %}
+</ul>

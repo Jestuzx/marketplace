@@ -1,0 +1,12 @@
+<form id="sort-form" hx-get="{% url 'products:sort_partial' %}" hx-target="#product-list" hx-swap="innerHTML">
+    <label for="sort">Сортировка:</label>
+    <select name="sort" id="sort" onchange="this.form.submit()">
+        <option value="">По умолчанию</option>
+        <option value="price_asc">Цена ↑</option>
+        <option value="price_desc">Цена ↓</option>
+        <option value="name_asc">Название ↑</option>
+        <option value="name_desc">Название ↓</option>
+        <option value="newest">Сначала новые</option>
+        <option value="oldest">Сначала старые</option>
+    </select>
+</form>

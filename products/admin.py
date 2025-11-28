@@ -9,3 +9,8 @@ class ProductAdmin(admin.ModelAdmin):
     list_display = ("name", "seller", "price", "available", "created_at")
     list_filter = ("available", "created_at", "category")
     search_fields = ("name", "description")
+
+@admin.register(Category)
+class CategoryAdmin(admin.ModelAdmin):
+    list_display = ("name", "slug")
+    prepopulated_fields = {"slug": ("name",)}

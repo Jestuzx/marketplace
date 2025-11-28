@@ -1,57 +1,31 @@
-{% extends 'base.html' %}
-{% load cart_tags %}
+{% extends "base.html" %}
 {% load static %}
 
-
-{% block title %}Product Catalog{% endblock %}
-
 {% block extra_css %}
-<link rel="stylesheet" href="{% static 'css/products.css' %}">
+    <link rel="stylesheet" href="{% static 'css/products.css' %}">
 {% endblock %}
 
 {% block content %}
-<h1 class="catalog-title">Product Catalog</h1>
 
-<div class="catalog-wrapper">
-    <!-- Левая колонка: фильтры -->
-    <aside class="filters">
-        <form id="filter-form"
-              hx-get="{% url 'products:product_list' %}"
-              hx-target="#products-grid"
-              hx-trigger="change delay:500ms">
-            <div>
-                <label>Search</label>
-                <input type="text" name="search" value="{{ request.GET.search }}">
-            </div>
-            <div>
-                <label>Category</label>
-                <select name="category">
-                    <option value="">All</option>
-                    {% for cat in categories %}
-                    <option value="{{ cat.id }}" {% if request.GET.category == cat.id|stringformat:"s" %}selected{% endif %}>
-                        {{ cat.name }}
-                    </option>
-                    {% endfor %}
-                </select>
-            </div>
-            <div>
-                <label>Min price</label>
-                <input type="number" name="min_price" value="{{ request.GET.min_price }}">
-            </div>
-            <div>
-                <label>Max price</label>
-                <input type="number" name="max_price" value="{{ request.GET.max_price }}">
-            </div>
-            <div>
-                <label>In stock</label>
-                <input type="checkbox" name="available" value="True" {% if request.GET.available %}checked{% endif %}>
-            </div>
-        </form>
-    </aside>
+<h2>Products</h2>
 
-    <!-- Правая колонка: товары -->
-    <div id="products-grid">
-        {% include 'products/products_grid_partial.html' %}
-    </div>
+<!-- ====== Форма поиска (динамический поиск) ====== -->
+<form id="search-form"
+      hx-get="{% url 'products:sort_partial' %}"
+      hx-target="#product-list"
+      hx-trigger="keyup changed delay:300ms"
+      hx-swap="innerHTML">
+    <input type="text" name="search" placeholder="Поиск..." value="{{ request.GET.search }}">
+</form>
+
+<!-- ====== Блок сортировки ====== -->
+<div id="sort-container">
+    {% include "products/partials/sort_control.html" %}
 </div>
+
+<!-- ====== Контейнер для товаров ====== -->
+<div id="product-list">
+    {% include "products/partials/product_list_items.html" %}
+</div>
+
 {% endblock %}

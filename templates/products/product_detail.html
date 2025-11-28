@@ -1,35 +1,12 @@
-{% extends 'base.html' %}
-
-{% block title %}{{ product.name }}{% endblock %}
+{% extends "base.html" %}
+{% load static %}
 
 {% block content %}
-<h2>{{ product.name }}</h2>
-
-{% if product.image %}
-    <img src="{{ product.image.url }}" alt="{{ product.name }}">
-{% else %}
-    <p>No image available</p>
-{% endif %}
-
-<p>{{ product.description }}</p>
-<p>Price: {{ product.price }} USD</p>
-<p>Category: {{ product.category.name }}</p>
-
-<h3>Leave a review</h3>
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Submit Review</button>
-</form>
-
-<h3>Product Reviews</h3>
-<ul>
-    {% for review in reviews %}
-        <li><strong>{{ review.user.username }}</strong>: {{ review.rating }}/5<br>{{ review.comment }}</li>
-    {% empty %}
-        <li>No reviews yet.</li>
-    {% endfor %}
-</ul>
-
-<a href="{% url 'products:product_list' %}">← Back to catalog</a>
+<div class="product-detail">
+    <img src="{{ product.image.url }}" alt="{{ product.name }}" class="product-image">
+    <h1>{{ product.name }}</h1>
+    <p>Цена: {{ product.price }} PLN</p>
+    <p>{{ product.description }}</p>
+    <a href="{% url 'products:product_list' %}">Назад к списку товаров</a>
+</div>
 {% endblock %}
